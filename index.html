@@ -93,9 +93,7 @@
                 const name = cols[0]?.replace(/"/g, '').trim();
                 const price = cols[6]?.replace(/"/g, '').trim();
 
-                // Logic: Name mein 'Perfera' AUR '3,5 kW' (ya 3.5) hona chahiye
-                if (name && (name.toLowerCase().includes('perfera')) && 
-                    (name.includes('3,5 kW') || name.includes('3.5 kW'))) {
+                if (name.includes('3,5 kW') || name.includes('3.5 kW'))) {
                     
                     if (price && price !== "0" && price !== "") {
                         count++;
@@ -125,3 +123,4 @@
 
 </body>
 </html>
+
