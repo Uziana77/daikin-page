@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daikin Inventory - 3.5 kW Search</title>
+    <title>Daikin Perfera 3.5 kW - Inventory</title>
     <style>
         :root {
             --accent: #0066cc;
@@ -57,23 +57,23 @@
             white-space: nowrap;
         }
 
-        #loading { text-align: center; padding: 40px; color: #666; }
+        #loading { text-align: center; padding: 40px; color: #666; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card-container">
     <div class="header-section">
-        <h1 style="margin:0; color:var(--accent);">Daikin Airco Overzicht</h1>
-        <p style="color:#666;">Geselecteerde modellen: 3.5 kW / 3,5 kW</p>
+        <h1 style="margin:0; color:var(--accent);">Daikin Perfera 3.5 kW</h1>
+        <p style="color:#666;">Official Inventory 2025</p>
     </div>
 
-    <div id="loading">Producten zoeken in database...</div>
+    <div id="loading">Database scannen...</div>
     <div id="price-list"></div>
 </div>
 
 <script>
-    // Aapka CSV link (Ensure this is published to web as CSV)
+    // Aapki screenshot wala exact link
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSNmatn7Yh1FGwR1q61wCBkHFHVKYmylywO2-_Hlox-zTcolSzKOve4MRtiiI9pN5_rSLsk_FdEcm-6/pub?gid=0&single=true&output=csv';
 
     async function fetchFilteredData() {
@@ -81,25 +81,26 @@
             const response = await fetch(CSV_URL);
             const data = await response.text();
             
-            // Rows split by newline
+            // Lines split karein
             const rows = data.split(/\r?\n/);
             const listDiv = document.getElementById('price-list');
             
             let htmlContent = '';
             let count = 0;
 
-            // Start loop from 0 to check the whole column
+            // Sheet scan loop (Row 0 se start taake sab mile)
             for (let i = 0; i < rows.length; i++) {
-                // Split by comma but ignore commas inside quotes
+                // Split logic
                 const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 
-                // Column B is index 1, Column E is index 4
+                // Indexing according to your screenshot:
+                // Column B (Name) = index 1
+                // Column E (Total Price) = index 4
                 const name = cols[1] ? cols[1].replace(/"/g, '').trim() : "";
                 const price = cols[4] ? cols[4].replace(/"/g, '').trim() : "";
 
-                // Logic: Search for '3,5 kw' or '3.5 kw' anywhere in the name (case insensitive)
-                const lowerName = name.toLowerCase();
-                if (lowerName.includes('3,5 kw') || lowerName.includes('3.5 kw')) {
+                // Logic: "3,5" ya "3.5" check karein
+                if (name.includes('3,5') || name.includes('3.5')) {
                     
                     if (price && price !== "0" && price !== "") {
                         count++;
@@ -116,10 +117,14 @@
             }
 
             document.getElementById('loading').style.display = 'none';
-            listDiv.innerHTML = htmlContent || '<p style="text-align:center;">Geen producten gevonden met 3.5 kW.</p>';
+            if (count > 0) {
+                listDiv.innerHTML = htmlContent;
+            } else {
+                listDiv.innerHTML = '<p style="text-align:center;">Geen producten gevonden met 3,5 kW.</p>';
+            }
 
         } catch (error) {
-            document.getElementById('loading').innerHTML = "Fout bij het laden van data.";
+            document.getElementById('loading').innerHTML = "Fout bij laden.";
             console.error(error);
         }
     }
