@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daikin Perfera 3.5 kW - Inventory</title>
+    <title>Daikin Inventory - 3.5 kW Search</title>
     <style>
         :root {
             --accent: #0066cc;
@@ -64,36 +64,42 @@
 
 <div class="card-container">
     <div class="header-section">
-        <h1 style="margin:0; color:var(--accent);">Daikin Perfera 3.5 kW</h1>
-        <p style="color:#666;">Official Price List 2025</p>
+        <h1 style="margin:0; color:var(--accent);">Daikin Airco Overzicht</h1>
+        <p style="color:#666;">Geselecteerde modellen: 3.5 kW / 3,5 kW</p>
     </div>
 
-    <div id="loading">Searching for 3.5 kW Perfera models...</div>
+    <div id="loading">Producten zoeken in database...</div>
     <div id="price-list"></div>
 </div>
 
 <script>
-    // Aapka CSV link
+    // Aapka CSV link (Ensure this is published to web as CSV)
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSNmatn7Yh1FGwR1q61wCBkHFHVKYmylywO2-_Hlox-zTcolSzKOve4MRtiiI9pN5_rSLsk_FdEcm-6/pub?gid=0&single=true&output=csv';
 
     async function fetchFilteredData() {
         try {
             const response = await fetch(CSV_URL);
             const data = await response.text();
-            const rows = data.split('\n');
+            
+            // Rows split by newline
+            const rows = data.split(/\r?\n/);
             const listDiv = document.getElementById('price-list');
             
             let htmlContent = '';
             let count = 0;
 
-            for (let i = 4; i < rows.length; i++) {
-                // Handle commas inside quotes
+            // Start loop from 0 to check the whole column
+            for (let i = 0; i < rows.length; i++) {
+                // Split by comma but ignore commas inside quotes
                 const cols = rows[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 
-                const name = cols[1]?.replace(/"/g, '').trim();
-                const price = cols[4]?.replace(/"/g, '').trim();
+                // Column B is index 1, Column E is index 4
+                const name = cols[1] ? cols[1].replace(/"/g, '').trim() : "";
+                const price = cols[4] ? cols[4].replace(/"/g, '').trim() : "";
 
-                if (name.includes('3,5 kW') || name.includes('3.5 kW'))) {
+                // Logic: Search for '3,5 kw' or '3.5 kw' anywhere in the name (case insensitive)
+                const lowerName = name.toLowerCase();
+                if (lowerName.includes('3,5 kw') || lowerName.includes('3.5 kw')) {
                     
                     if (price && price !== "0" && price !== "") {
                         count++;
@@ -110,10 +116,10 @@
             }
 
             document.getElementById('loading').style.display = 'none';
-            listDiv.innerHTML = htmlContent || '<p style="text-align:center;">No matching products found.</p>';
+            listDiv.innerHTML = htmlContent || '<p style="text-align:center;">Geen producten gevonden met 3.5 kW.</p>';
 
         } catch (error) {
-            document.getElementById('loading').innerHTML = "Error loading data.";
+            document.getElementById('loading').innerHTML = "Fout bij het laden van data.";
             console.error(error);
         }
     }
@@ -123,6 +129,3 @@
 
 </body>
 </html>
-
-
-
